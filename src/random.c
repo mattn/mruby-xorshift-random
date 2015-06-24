@@ -69,7 +69,7 @@ static mrb_value mrb_rand(mrb_state* mrb, mrb_value self)
   s = (xor128_t*) DATA_PTR(self);
   r = xor128(s);
   if (mrb_nil_p(max) || mrb_fixnum(max) == 0) {
-    return mrb_float_value(r / (double) 0xffffffff);
+    return mrb_float_value(mrb, r / (double) 0xffffffff);
   }
   return mrb_fixnum_value(r % mrb_fixnum(max));
 }
@@ -92,12 +92,12 @@ static mrb_value mrb_srand(mrb_state* mrb, mrb_value self)
 
 static mrb_value mrb_random_g_srand(mrb_state *mrb, mrb_value self)
 {
-  return mrb_srand(mrb, mrb_gv_get(mrb, mrb_intern(mrb, "$xor128")));
+  return mrb_srand(mrb, mrb_gv_get(mrb, mrb_intern_lit(mrb, "$xor128")));
 }
 
 static mrb_value mrb_random_g_rand(mrb_state *mrb, mrb_value self)
 {
-  return mrb_rand(mrb, mrb_gv_get(mrb, mrb_intern(mrb, "$xor128")));
+  return mrb_rand(mrb, mrb_gv_get(mrb, mrb_intern_lit(mrb, "$xor128")));
 }
 
 static mrb_value mrb_random_srand(mrb_state *mrb, mrb_value self)
@@ -136,7 +136,7 @@ void mrb_mruby_xorshift_random_gem_init(mrb_state *mrb)
   mrb_define_method(mrb, random, "rand", mrb_random_rand, MRB_ARGS_OPT(1));
   mrb_define_method(mrb, random, "srand", mrb_random_srand, MRB_ARGS_OPT(1));
 
-  mrb_gv_set(mrb, mrb_intern(mrb, "$xor128"), mrb_class_new_instance(mrb, 0, NULL, random));
+  mrb_gv_set(mrb, mrb_intern_lit(mrb, "$xor128"), mrb_class_new_instance(mrb, 0, NULL, random));
 }
 
 void mrb_mruby_xorshift_random_gem_final(mrb_state *mrb)
